@@ -1,0 +1,147 @@
+== step1_model
+language: 188 words, 12 topics, 271,604 words of text
+sample: the singer sees a song near the studio . a band and a pianist finds the studio . the band finds a song near the studio . the big band plays the quiet guitar . the teacher grades the test
+model: 9,284 weights, 24 neurons in the middle, trained in 21 s
+surprise at the next word, before training 5.16, after 1.03  (guessing blindly: 5.24)
+writes: the sailor sees a happy comet near the planet . a mayor and a mayor finds the square . a cop and a cop
+writes: the king sees a happy crown near the tower . a student and a pupil likes the school . a principal and a principal
+writes: in the kitchen , the baker slices a bread . the chef stirs the bread . the soup is tired and the bakery is big .
+grammatical sentences in 3,000 generated words: 95.2%
+== step2_neurons
+recorded 271,596 positions x 24 neurons;  a neuron is on at 63% of positions, 15.1 neurons are on at once
+neuron   on    strongest topic      strongest next-word kind
+   0    69%   forest     14%       a thing             29%
+   1    79%   sport      14%       a place             25%
+   2    76%   hospital   14%       a describing word   37%
+   3    70%   castle     12%       a small word        32%
+   4    58%   space      12%       a describing word   32%
+   5    48%   hospital   13%       a person            26%
+   6    64%   kitchen    14%       a place             41%
+   7    54%   space      12%       an action           38%
+   8    56%   sea        13%       a place             28%
+   9    61%   city       14%       a small word        24%
+  10    65%   sea        11%       a small word        34%
+  11    67%   snow       18%       a small word        31%
+  12    72%   space      14%       a liking word       31%
+  13    74%   sea        16%       a small word        36%
+  14    65%   forest     15%       a small word        39%
+  15    52%   castle     16%       a describing word   32%
+  16    50%   city       13%       a liking word       44%
+  17    61%   sport      14%       a small word        33%
+  18    65%   farm       14%       a small word        31%
+  19    50%   farm       15%       a liking word       36%
+  20    51%   music      15%       a place             29%
+  21    78%   school     12%       a person            33%
+  22    70%   school     15%       a liking word       32%
+  23    54%   sport      12%       a liking word       41%
+most topic-minded neuron: 18% of its activity in one topic (an even spread over 12 topics is 8%)
+most kind-minded neuron: 44% of its activity before one kind of word (an even spread over 7 kinds is 14%)
+neurons with more than half of their activity in one topic: 0 of 24
+neuron 11, eight of its strongest moments:
+   10.3  [snow]  big . a penguin and a skier likes  ->  the
+   9.5  [snow]  sled . a skier and a skier sees  ->  the
+   8.6  [snow]  skier slides a ice . a skier and  ->  a
+   8.3  [kitchen]  bakery . a cook and a waiter finds  ->  the
+   8.1  [snow]  snowman shovels the sled . a penguin and  ->  a
+   7.9  [snow]  a climber and a skier sees the cabin  ->  .
+   7.6  [snow]  . the quiet climber slides the small snowball  ->  .
+   7.5  [snow]  the gym . the sled is new and  ->  the
+topics among each neuron's 200 strongest moments: from 1 to 11 of 12, typical 3
+== step3_superposition
+feature on 100% of the time: kept 2 of 5   lengths 0.36 0.45 0.28 0.93 0.86   gaps between directions 50 213 20 30 48   error 15.0%
+feature on  30% of the time: kept 4 of 5   lengths 1.02 0.02 1.01 1.02 1.00   gaps between directions 90 89 29 62 90   error 27.3%
+feature on  10% of the time: kept 5 of 5   lengths 1.10 1.11 1.10 1.12 1.09   gaps between directions 73 72 72 72 72   error 15.0%
+feature on   3% of the time: kept 5 of 5   lengths 1.15 1.16 1.15 1.15 1.17   gaps between directions 73 72 72 72 71   error 8.0%
+== step4_sparse_autoencoder
+no sparsity  rebuilt 100.0%   features used per vector 3.01   match to the 5 hidden directions: 0.896 0.990 0.983 0.994 0.939
+sparse       rebuilt 96.9%   features used per vector 1.00   match to the 5 hidden directions: 0.999 1.000 0.998 1.000 1.000
+== step5_sae_on_model
+24 neurons -> 64 features, at most 3 on at a time, 8,000 training steps
+rebuilds 89.4% of the neurons' activity;  features on per position 3.00;  dead features 0
+a feature is on at 4.7% of positions (a neuron: 63%);  busiest 11.0%, rarest 1.12%
+surprise at the next word:  own neurons 1.019   rebuilt from features 1.155   neurons erased 6.24
+the features keep 97.4% of what the neurons were doing for the model
+one position: the ward , the doctor treats a pill  ->  .
+  neurons : 3.6 0.0 3.6 0.0 0.0 3.3 5.1 1.1 5.8 5.1 1.0 0.0 0.0 1.7 1.1 3.2 1.5 5.0 2.9 1.4 2.4 0.0 0.0 5.8
+  features: #3 = 7.7, #7 = 5.5, #19 = 2.3  (the other 61 are zero)
+  rebuilt : 3.4 -0.9 3.2 0.4 0.1 4.1 4.2 1.7 4.5 4.8 0.8 -0.9 0.9 1.7 1.8 2.6 1.5 5.2 2.7 1.1 2.5 -0.3 -0.2 5.2
+== step6_features
+what each unit names (at least 75% of its activity in one place):
+  24 neurons                 a topic  0   the kind of next word  0   unclear 24
+  64 features, no sparsity   a topic  0   the kind of next word  0   unclear 64
+  64 sparse features         a topic 16   the kind of next word 24   unclear 24
+the best feature for each topic:
+  sea       feature #42   83% of its activity is in sea   on at 4.9% of positions
+  farm      feature #40   81% of its activity is in farm   on at 4.3% of positions
+  city      feature #29   85% of its activity is in city   on at 4.2% of positions
+  kitchen   feature #28   88% of its activity is in kitchen   on at 4.0% of positions
+  space     feature #19   85% of its activity is in space   on at 2.0% of positions
+  school    feature #63   84% of its activity is in school   on at 3.8% of positions
+  forest    feature #21   87% of its activity is in forest   on at 1.1% of positions
+  music     feature #6    77% of its activity is in music   on at 2.8% of positions
+  hospital  feature #7    88% of its activity is in hospital   on at 5.5% of positions
+  castle    feature #14   81% of its activity is in castle   on at 5.3% of positions
+  sport     feature #32   83% of its activity is in sport   on at 4.7% of positions
+  snow      feature #23   89% of its activity is in snow   on at 2.6% of positions
+features that name the next word:
+  #62 a place             95%   next: river 3%, planet 3%, barn 3%
+  #34 a describing word   94%   next: big 12%, loud 12%, small 12%
+  #38 a person            85%   next: bear 2%, cop 2%, tourist 2%
+  #49 a small word        97%   next: a 89%, the 9%, , 1%
+  #36 a small word        99%   next: the 100%, and 0%, rocket 0%
+  #9  a small word       100%   next: the 54%, a 28%, in 17%
+  #37 a small word        97%   next: the 54%, a 29%, in 13%
+  #45 a small word        88%   next: the 89%, a 5%, in 4%
+  #27 a small word        85%   next: the 54%, a 29%, in 14%
+  #59 a small word        88%   next: . 92%, , 3%, near 2%
+feature #42, eight of its strongest moments:
+   7.6  [sea]  in the beach , the captain rows a  ->  ship
+   7.3  [sea]  in the island , the whale hauls a  ->  wave
+   7.1  [sea]  rows a net . a captain and a  ->  captain
+   6.2  [sea]  near the tower . a captain and a  ->  sailor
+   5.8  [sea]  the beach . in the beach , the  ->  sailor
+   5.7  [sea]  ship is loud and the harbor is tired  ->  .
+   5.6  [sea]  the harbor . in the harbor , the  ->  whale
+   5.5  [sea]  wave is quiet and the harbor is old  ->  .
+== step7_steering
+untouched: largest topic share 20%, grammatical 97%
+    the book is small and the library is new . the test is old and the library is new . the test is quiet and the library is
+every topic feature held at its usual value, at every word:
+  sea       #42  84% of topic words are sea words, grammatical  90%   big . the anchor is tired and the beach is tired . the whale
+  farm      #40  64% of topic words are farm words, grammatical  70%   and egg . is new and a horse finds the cafe . a cow
+  city      #29  89% of topic words are city words, grammatical  88%   bus near the station . the taxi is happy and the station is small
+  kitchen   #28  81% of topic words are kitchen words, grammatical  72%   chef stirs a knife . in the cafe , the cook stirs a bread
+  space     #19  76% of topic words are space words, grammatical  79%   is moon . the , robot lands the helmet near the crater . the
+  school    #63  57% of topic words are school words, grammatical  69%   and a principal likes the school . a principal and a pupil finds the
+  forest    #21  39% of topic words are forest words, grammatical  68%   astronaut lands a helmet . in the crater , the alien lands a comet
+  music     #6   11% of topic words are music words, grammatical  90%   the patient treats the pill . the patient treats the chart . the doctor
+  hospital  #7   78% of topic words are hospital words, grammatical  72%   . the needle is old and the clinic is small . the needle is
+  castle    #14  76% of topic words are castle words, grammatical  78%   . the shield is old and the tower is small . the shield is
+  sport     #32  79% of topic words are sport words, grammatical  83%   kicks a whistle . stadium . in the pitch , the goalkeeper wins a
+  snow      #23  97% of topic words are snow words, grammatical  91%   big . a climber and a penguin likes the mountain . a climber and
+the snow feature (#23, usual value 4.1) at different strengths:
+  x0    snow words  10%   grammatical  97%   the pan is quiet and the cafe is happy . a cook and a cook sees
+  x0.5  snow words  75%   grammatical  97%   sees the cabin . the ice is quiet and the cabin is happy . a snowman
+  x1    snow words  97%   grammatical  91%   big . a climber and a penguin likes the mountain . a climber and a snowman
+  x1.5  snow words  94%   grammatical  58%   snowman finds the glacier . a climber and a snowman finds the cabin . a snowman
+  x2    snow words  97%   grammatical  25%   snowman finds the cabin . a sled and a snowman finds the cabin . a penguin
+  x3    snow words 100%   grammatical   0%   is mountain . a . is snowball and a snowball is sled . the . a
+  x5    snow words 100%   grammatical   0%   mountain cabin cabin cabin glacier cabin cabin cabin cabin glacier cabin cabin cabin glacier cabin glacier
+  x10   snow words 100%   grammatical   0%   mountain cabin cabin cabin glacier cabin cabin cabin cabin glacier cabin cabin cabin glacier cabin glacier
+  prompt "in the kitchen , the chef", snow feature untouched:  in the kitchen , the chef bakes a pan . the pilot sees a tired helmet near the planet . the robot lands the rocket . the alien orbits the tired satellite . the happy driver
+  prompt "in the kitchen , the chef", snow feature on:  in the kitchen , the chef bakes a pan . a penguin and a penguin finds the mountain . a penguin and a climber likes the glacier . a climber and a penguin finds the mountain
+features: 8 of 12 topics reached (at least 75% of topic words), and we knew which feature to turn
+single neurons held at 1 x their usual value: 0 of 12 topics reached (none);  typical neuron: 25% for its strongest topic, grammatical 93%
+single neurons held at 3 x their usual value: 5 of 12 topics reached (forest, hospital, kitchen, school, space);  typical neuron: 60% for its strongest topic, grammatical 47%
+== step8_how_many
+features   rebuilds   surprise (own 1.02)   dead   name a topic   name the next word   unclear   topics with a feature
+    16      75.0%        1.791            0         0                1             15             0 of 12
+    32      83.2%        1.363            0         1                7             24             1 of 12
+    64      89.4%        1.155            0        16               24             24            12 of 12
+   128      92.8%        1.075            1        39               58             30            12 of 12
+   256      94.5%        1.061           36        98               83             39            12 of 12
+  16 features: 0 snow feature(s): 
+  32 features: 1 snow feature(s): 87% snow, mostly before a thing (27%)
+  64 features: 2 snow feature(s): 89% snow, mostly before a small word (39%); 86% snow, mostly before a thing (37%)
+ 128 features: 4 snow feature(s): 95% snow, mostly before an action (49%); 92% snow, mostly before a small word (84%); 89% snow, mostly before a thing (41%); 75% snow, mostly before a small word (100%)
+ 256 features: 8 snow feature(s): 97% snow, mostly before a liking word (50%); 95% snow, mostly before a small word (99%); 95% snow, mostly before a small word (76%); 94% snow, mostly before a small word (100%); 93% snow, mostly before a thing (58%); 92% snow, mostly before a small word (100%); 86% snow, mostly before a thing (53%); 75% snow, mostly before a small word (100%)
